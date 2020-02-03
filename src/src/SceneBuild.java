@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
+import javafx.scene.*;
 
 public class SceneBuild extends Application {
 
@@ -75,14 +76,45 @@ public class SceneBuild extends Application {
     // BEGIN SECONDARY FUNCTIONS
 
     public void p1solution(){
+        int globalPosX = 700;
+        int globalPosY = 700;
+
         Stage p1stage = new Stage();
 
         Label templabel = new Label("this is a test");
 
         GridPane mygrid = new GridPane();
         mygrid.add(templabel,0,0);
+        mygrid.setAlignment(Pos.TOP_LEFT);
 
-        Scene mys = new Scene(mygrid, 100 , 100);
+        // Setup the tree structure
+        Group p1Group = new Group();
+        partTree p1Tree = new partTree(2,p1Group,globalPosX,globalPosY);
+
+        // Add root node with blue circle and main branch nodes
+        p1Tree.addNode(50,"root");
+        p1Tree.addNode(48,"L1");
+        p1Tree.addNode(30,"L2");
+        p1Tree.addNode(35,"R2");
+        p1Tree.addNode(51,"R1");
+        p1Tree.addNode(60,"L2");
+
+
+        p1Tree.inOrderGetShapes(p1Tree.root, p1Group);
+
+
+
+
+
+
+
+
+
+
+
+
+        Scene mys = new Scene(p1Group, globalPosX , globalPosY);
+
 
         p1stage.setScene(mys);
         p1stage.setTitle("Problem #1 Solution");
