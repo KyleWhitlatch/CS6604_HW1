@@ -1,5 +1,6 @@
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
+import java.lang.Math;
 
 public class partTree {
 
@@ -20,9 +21,11 @@ public class partTree {
     }
 
     // Adds nodes to tree with key and name.
-    public partNode addNode(String name,partNode parentNode) {
+    public partNode addNode(String name,partNode parentNode, int treeLayer) {
 
-        int curLayer = 0;
+        int yshift = 80; // Adjust to change distance between levels.
+
+        int initXShift = 250; // Initial shift for first layer.
 
         if (name == "root") {
 
@@ -39,6 +42,14 @@ public class partTree {
             partNode focusNode = parentNode;
             partNode parent = parentNode;
 
+            int xshift;
+
+            xshift = initXShift;
+
+            if(treeLayer != 1)
+                xshift = (int)(initXShift / (2*treeLayer));
+
+            yshift = yshift/treeLayer;
 
             if (name == "Left") {
 
@@ -48,7 +59,8 @@ public class partTree {
 
                     parent.leftChild = newNode;
                     parent.leftChild.parent = parent;
-                    parent.leftChild.setNodeXY(parent.nodeX - 75, parent.nodeY + 40);
+                    parent.leftChild.setNodeXY(parent.nodeX - xshift, parent.nodeY + yshift);
+                    parent.leftChild.treeLevel = treeLayer;
                     return parent.leftChild;
 
                 }
@@ -61,7 +73,8 @@ public class partTree {
 
                     parent.middleChild = newNode;
                     parent.middleChild.parent = parent;
-                    parent.middleChild.setNodeXY(parent.nodeX, parent.nodeY + 40);
+                    parent.middleChild.setNodeXY(parent.nodeX, parent.nodeY + yshift);
+                    parent.middleChild.treeLevel = treeLayer;
                     return parent.middleChild;
 
                 }
@@ -74,7 +87,8 @@ public class partTree {
 
                     parent.rightChild = newNode;
                     parent.rightChild.parent = parent;
-                    parent.rightChild.setNodeXY(parent.nodeX + 75, parent.nodeY + 40);
+                    parent.rightChild.setNodeXY(parent.nodeX + xshift, parent.nodeY + yshift);
+                    parent.rightChild.treeLevel = treeLayer;
                     return parent.rightChild;
 
                 }
@@ -91,7 +105,6 @@ public class partTree {
         }
 
         return null;
-
 
     }
 
@@ -134,7 +147,6 @@ public class partTree {
             inOrderGetNodeShapes(focusNode.leftChild, globalGroup);
             inOrderGetNodeShapes(focusNode.middleChild,globalGroup);
             inOrderGetNodeShapes(focusNode.rightChild, globalGroup);
-
         }
 
     }

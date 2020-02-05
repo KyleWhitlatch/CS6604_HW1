@@ -76,8 +76,8 @@ public class SceneBuild extends Application {
     // BEGIN SECONDARY FUNCTIONS
 
     public void p1solution(){
-        int globalPosX = 700;
-        int globalPosY = 350;
+        int globalPosX = 900;
+        int globalPosY = 250;
 
         Stage p1stage = new Stage();
 
@@ -93,28 +93,46 @@ public class SceneBuild extends Application {
 
         partNode nodeArray[] = new partNode[50];
 
-        // Add root node with blue circle and main branch nodes
+        // Add root node with blue circle and main branch nodes with subbranches
 
-        nodeArray[0] = p1Tree.addNode("root", null);
-        nodeArray[1] = p1Tree.addNode("Left", nodeArray[0]);
-        nodeArray[2] = p1Tree.addNode("Right", nodeArray[0]);
+        int numMain = 3;
+        int numSub = 2;
+        int numLeaves = 3;
+
+
+        int index = 1;
+        String[] branchNames = {"Left","Right","Middle"};
+        nodeArray[0] = p1Tree.addNode("root", null, 0);
+        partNode mainParent;
+        partNode subParent;
+
+        for(int i = 0; i < numMain; i++){
+
+            nodeArray[index] = p1Tree.addNode(branchNames[i], nodeArray[0], 1);
+            mainParent = nodeArray[index];
+            index++;
+
+            for(int j = 0; j < numSub; j++){
+
+                nodeArray[index] = p1Tree.addNode(branchNames[j],mainParent, 2);
+                subParent = nodeArray[index];
+                index++;
 
 
 
+                for(int k = 0; k < numLeaves; k++){
+
+                    nodeArray[index] = p1Tree.addNode(branchNames[k],subParent, 3);
+                    index++;
+
+                }
+
+            }
+
+        }
 
         p1Tree.inOrderAddLines(p1Tree.root, p1Group);
         p1Tree.inOrderGetNodeShapes(p1Tree.root, p1Group);
-
-
-
-
-
-
-
-
-
-
-
 
         Scene mys = new Scene(p1Group, globalPosX , globalPosY);
 

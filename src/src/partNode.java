@@ -40,7 +40,6 @@ public class partNode {
         this.nodeY = nodeY;
         initCircle(nodeGroup);
 
-
     }
 
     // Sets nodes level is tree.
