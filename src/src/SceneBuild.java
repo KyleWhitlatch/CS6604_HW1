@@ -77,7 +77,7 @@ public class SceneBuild extends Application {
 
     public void p1solution(){
         int globalPosX = 700;
-        int globalPosY = 700;
+        int globalPosY = 350;
 
         Stage p1stage = new Stage();
 
@@ -91,16 +91,19 @@ public class SceneBuild extends Application {
         Group p1Group = new Group();
         partTree p1Tree = new partTree(2,p1Group,globalPosX,globalPosY);
 
+        partNode nodeArray[] = new partNode[50];
+
         // Add root node with blue circle and main branch nodes
-        p1Tree.addNode(50,"root");
-        p1Tree.addNode(48,"L1");
-        p1Tree.addNode(30,"L2");
-        p1Tree.addNode(35,"R2");
-        p1Tree.addNode(51,"R1");
-        p1Tree.addNode(60,"L2");
+
+        nodeArray[0] = p1Tree.addNode("root", null);
+        nodeArray[1] = p1Tree.addNode("Left", nodeArray[0]);
+        nodeArray[2] = p1Tree.addNode("Right", nodeArray[0]);
 
 
-        p1Tree.inOrderGetShapes(p1Tree.root, p1Group);
+
+
+        p1Tree.inOrderAddLines(p1Tree.root, p1Group);
+        p1Tree.inOrderGetNodeShapes(p1Tree.root, p1Group);
 
 
 
