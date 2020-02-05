@@ -6,22 +6,27 @@ import javafx.scene.shape.Line;
 
 public class partNode {
 
+    // General node vars.
+    int nodeNum;
     int treeLevel;
     int nodeX;
     int nodeY;
-    boolean hasPartition;
-    boolean representative;
     Circle nodeCircle;
     Color nodeColor;
     Line nodeLine;
     Group nodeGroup;
-
     String name;
 
+    // General tree structure vars.
     partNode parent;
     partNode leftChild;
     partNode middleChild;
     partNode rightChild;
+
+    // Representative vars
+    boolean isInPart;
+    boolean isRep;
+    boolean isLeaf;
 
     partNode( String name, Group nodeGroup){
 
@@ -29,6 +34,7 @@ public class partNode {
         this.nodeX = 200;
         this.nodeY = 50;
         initCircle(nodeGroup);
+
 
 
     }
@@ -39,6 +45,7 @@ public class partNode {
         this.nodeX = nodeX;
         this.nodeY = nodeY;
         initCircle(nodeGroup);
+
 
     }
 
@@ -72,6 +79,7 @@ public class partNode {
 
 
     }
+
 
 
 }

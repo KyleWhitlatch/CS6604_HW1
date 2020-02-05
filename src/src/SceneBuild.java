@@ -81,30 +81,30 @@ public class SceneBuild extends Application {
 
         Stage p1stage = new Stage();
 
-        Label templabel = new Label("this is a test");
-
-        GridPane mygrid = new GridPane();
-        mygrid.add(templabel,0,0);
-        mygrid.setAlignment(Pos.TOP_LEFT);
+//        Label templabel = new Label("this is a test");
+//
+//        GridPane mygrid = new GridPane();
+//        mygrid.add(templabel,0,0);
+//        mygrid.setAlignment(Pos.TOP_LEFT);
 
         // Setup the tree structure
         Group p1Group = new Group();
         partTree p1Tree = new partTree(2,p1Group,globalPosX,globalPosY);
-
         partNode nodeArray[] = new partNode[50];
 
-        // Add root node with blue circle and main branch nodes with subbranches
+        // Setup tree creation vars.
 
         int numMain = 3;
         int numSub = 2;
         int numLeaves = 3;
-
-
         int index = 1;
         String[] branchNames = {"Left","Right","Middle"};
         nodeArray[0] = p1Tree.addNode("root", null, 0);
+        partNode rootNode = nodeArray[0];
         partNode mainParent;
         partNode subParent;
+
+        // Create Tree node hierarchy.
 
         for(int i = 0; i < numMain; i++){
 
@@ -131,6 +131,21 @@ public class SceneBuild extends Application {
 
         }
 
+        // Assign Representatives for Partitions
+
+        int numReps = 4;
+        partRep treeReps[] = new partRep[numReps];
+
+        treeReps[0] = new partRep(rootNode.leftChild);
+        treeReps[1] = new partRep(rootNode.rightChild);
+        treeReps[2] = new partRep(rootNode.middleChild.leftChild);
+        treeReps[3] = new partRep(rootNode.middleChild.rightChild);
+
+
+
+
+
+
         p1Tree.inOrderAddLines(p1Tree.root, p1Group);
         p1Tree.inOrderGetNodeShapes(p1Tree.root, p1Group);
 
@@ -156,8 +171,6 @@ public class SceneBuild extends Application {
 
 
     }
-
-
 
     // END SECONDARY FUNCTIONS
 

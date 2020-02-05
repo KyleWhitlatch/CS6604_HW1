@@ -31,6 +31,7 @@ public class partTree {
 
             partNode root = new partNode(name, treeGroup, globalX / 2, 50);
             this.root = root;
+            return root;
 
         } else {
 
@@ -150,6 +151,5 @@ public class partTree {
         }
 
     }
-
 
 }
