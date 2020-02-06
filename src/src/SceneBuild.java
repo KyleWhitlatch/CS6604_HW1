@@ -9,11 +9,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.*;
-
+import javafx.scene.input.*;
 public class SceneBuild extends Application {
 
     public static void main(String[] args) {
@@ -81,11 +82,50 @@ public class SceneBuild extends Application {
 
         Stage p1stage = new Stage();
 
-//        Label templabel = new Label("this is a test");
-//
-//        GridPane mygrid = new GridPane();
-//        mygrid.add(templabel,0,0);
-//        mygrid.setAlignment(Pos.TOP_LEFT);
+        // Create user input gridpane.
+        Label inLabel = new Label("User Inputs");
+        Label xLabel = new Label("X Position (No overlap)");
+        Label callLabel = new Label("Select Caller");
+        TextField xPosField = new TextField("3");
+        TextField calleeField = new TextField("Y");
+
+        GridPane mygrid = new GridPane();
+
+        mygrid.add(inLabel,0,0);
+        mygrid.add(xLabel,0,1);
+        mygrid.add(xPosField,0,2);
+        mygrid.add(callLabel,0,3);
+        mygrid.add(calleeField,0,4);
+        mygrid.setAlignment(Pos.TOP_LEFT);
+        int defCallerCell = 3;
+        partCaller userCaller = new partCaller(defCallerCell);
+
+        xPosField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    System.out.println(xPosField.getText());
+
+                    // Add function to handle where caller is placed.
+
+
+                }
+            }
+        });
+
+        calleeField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    System.out.println(calleeField.getText());
+
+                    // Add function to handle where call is being sent to.
+                }
+            }
+        });
+
 
         // Setup the tree structure
         Group p1Group = new Group();
@@ -99,22 +139,24 @@ public class SceneBuild extends Application {
         int numLeaves = 3;
         int index = 1;
         String[] branchNames = {"Left","Right","Middle"};
-        nodeArray[0] = p1Tree.addNode("root", null, 0);
+        nodeArray[0] = p1Tree.addNode("root", null, 0, 0);
         partNode rootNode = nodeArray[0];
         partNode mainParent;
         partNode subParent;
+
+
 
         // Create Tree node hierarchy.
 
         for(int i = 0; i < numMain; i++){
 
-            nodeArray[index] = p1Tree.addNode(branchNames[i], nodeArray[0], 1);
+            nodeArray[index] = p1Tree.addNode(branchNames[i], nodeArray[0], 1, index);
             mainParent = nodeArray[index];
             index++;
 
             for(int j = 0; j < numSub; j++){
 
-                nodeArray[index] = p1Tree.addNode(branchNames[j],mainParent, 2);
+                nodeArray[index] = p1Tree.addNode(branchNames[j],mainParent, 2, index);
                 subParent = nodeArray[index];
                 index++;
 
@@ -122,7 +164,7 @@ public class SceneBuild extends Application {
 
                 for(int k = 0; k < numLeaves; k++){
 
-                    nodeArray[index] = p1Tree.addNode(branchNames[k],subParent, 3);
+                    nodeArray[index] = p1Tree.addNode(branchNames[k],subParent, 3, index);
                     index++;
 
                 }
@@ -141,17 +183,14 @@ public class SceneBuild extends Application {
         treeReps[2] = new partRep(rootNode.middleChild.leftChild);
         treeReps[3] = new partRep(rootNode.middleChild.rightChild);
 
-
-
-
-
+        // Get Shapes and text and draw on window.
 
         p1Tree.inOrderAddLines(p1Tree.root, p1Group);
         p1Tree.inOrderGetNodeShapes(p1Tree.root, p1Group);
+        p1Tree.inOrderGetNodeText(p1Tree.root, p1Group);
 
+        p1Group.getChildren().add(mygrid);
         Scene mys = new Scene(p1Group, globalPosX , globalPosY);
-
-
         p1stage.setScene(mys);
         p1stage.setTitle("Problem #1 Solution");
         p1stage.show();

@@ -1,8 +1,8 @@
-
 import javafx.scene.Group;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 
 public class partNode {
 
@@ -13,6 +13,7 @@ public class partNode {
     int nodeY;
     Circle nodeCircle;
     Color nodeColor;
+    Text nodeText;
     Line nodeLine;
     Group nodeGroup;
     String name;
@@ -28,24 +29,31 @@ public class partNode {
     boolean isRep;
     boolean isLeaf;
 
-    partNode( String name, Group nodeGroup){
+    partNode( String name, Group nodeGroup, int nodeNum){
 
         this.name = name;
         this.nodeX = 200;
         this.nodeY = 50;
+        this.nodeNum = nodeNum;
+        this.nodeText = new Text();
+        nodeText.setText("" + this.nodeNum);
+        nodeText.setX(this.nodeX - 5);
+        nodeText.setY(this.nodeY + 5);
         initCircle(nodeGroup);
-
-
 
     }
 
-    partNode(String name, Group nodeGroup,int nodeX, int nodeY){
+    partNode(String name, Group nodeGroup,int nodeX, int nodeY, int nodeNum){
 
         this.name = name;
         this.nodeX = nodeX;
         this.nodeY = nodeY;
+        this.nodeNum = nodeNum;
+        this.nodeText = new Text();
+        nodeText.setText("" + this.nodeNum);
+        nodeText.setX(this.nodeX - 5);
+        nodeText.setY(this.nodeY + 5);
         initCircle(nodeGroup);
-
 
     }
 
@@ -77,6 +85,8 @@ public class partNode {
         nodeCircle.setCenterX(this.nodeX);
         nodeCircle.setCenterY(this.nodeY);
 
+        nodeText.setX(this.nodeX - 5);
+        nodeText.setY(this.nodeY + 5);
 
     }
 

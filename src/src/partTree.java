@@ -21,7 +21,7 @@ public class partTree {
     }
 
     // Adds nodes to tree with key and name.
-    public partNode addNode(String name,partNode parentNode, int treeLayer) {
+    public partNode addNode(String name,partNode parentNode, int treeLayer, int nodeNum) {
 
         int yshift = 80; // Adjust to change distance between levels.
 
@@ -29,13 +29,13 @@ public class partTree {
 
         if (name == "root") {
 
-            partNode root = new partNode(name, treeGroup, globalX / 2, 50);
+            partNode root = new partNode(name, treeGroup, globalX / 2, 50, nodeNum);
             this.root = root;
             return root;
 
         } else {
 
-            partNode newNode = new partNode(name, treeGroup);
+            partNode newNode = new partNode(name, treeGroup, nodeNum);
 
             if(parentNode == null)
                 parentNode = root;
@@ -148,6 +148,17 @@ public class partTree {
             inOrderGetNodeShapes(focusNode.leftChild, globalGroup);
             inOrderGetNodeShapes(focusNode.middleChild,globalGroup);
             inOrderGetNodeShapes(focusNode.rightChild, globalGroup);
+        }
+
+    }
+
+    public void inOrderGetNodeText(partNode focusNode, Group globalGroup) {
+
+        if (focusNode != null) {
+            globalGroup.getChildren().add(focusNode.nodeText);
+            inOrderGetNodeText(focusNode.leftChild, globalGroup);
+            inOrderGetNodeText(focusNode.middleChild,globalGroup);
+            inOrderGetNodeText(focusNode.rightChild, globalGroup);
         }
 
     }
