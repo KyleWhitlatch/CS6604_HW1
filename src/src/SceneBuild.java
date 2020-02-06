@@ -87,7 +87,7 @@ public class SceneBuild extends Application {
         Label xLabel = new Label("X Position (No overlap)");
         Label callLabel = new Label("Select Caller");
         TextField xPosField = new TextField("3");
-        TextField calleeField = new TextField("Y");
+        TextField calleeField = new TextField("A");
 
         GridPane mygrid = new GridPane();
 
@@ -97,35 +97,6 @@ public class SceneBuild extends Application {
         mygrid.add(callLabel,0,3);
         mygrid.add(calleeField,0,4);
         mygrid.setAlignment(Pos.TOP_LEFT);
-        int defCallerCell = 3;
-        partCaller userCaller = new partCaller(defCallerCell);
-
-        xPosField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-            @Override
-            public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.ENTER)) {
-                    System.out.println(xPosField.getText());
-
-                    // Add function to handle where caller is placed.
-
-
-                }
-            }
-        });
-
-        calleeField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-            @Override
-            public void handle(KeyEvent event) {
-                if(event.getCode().equals(KeyCode.ENTER)) {
-                    System.out.println(calleeField.getText());
-
-                    // Add function to handle where call is being sent to.
-                }
-            }
-        });
-
 
         // Setup the tree structure
         Group p1Group = new Group();
@@ -144,8 +115,6 @@ public class SceneBuild extends Application {
         partNode mainParent;
         partNode subParent;
 
-
-
         // Create Tree node hierarchy.
 
         for(int i = 0; i < numMain; i++){
@@ -160,8 +129,6 @@ public class SceneBuild extends Application {
                 subParent = nodeArray[index];
                 index++;
 
-
-
                 for(int k = 0; k < numLeaves; k++){
 
                     nodeArray[index] = p1Tree.addNode(branchNames[k],subParent, 3, index);
@@ -173,6 +140,8 @@ public class SceneBuild extends Application {
 
         }
 
+        p1Tree.assignLeaves(rootNode);
+
         // Assign Representatives for Partitions
 
         int numReps = 4;
@@ -182,6 +151,56 @@ public class SceneBuild extends Application {
         treeReps[1] = new partRep(rootNode.rightChild);
         treeReps[2] = new partRep(rootNode.middleChild.leftChild);
         treeReps[3] = new partRep(rootNode.middleChild.rightChild);
+
+        // Setup main and sub callers and event handling for user inputs
+        int startPos = 3;
+        partCaller userCaller = new partCaller(p1Tree.getNodebyNum(rootNode, startPos),"X",p1Group);
+
+
+        String calleeIDs[] = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+        int calleeCells[] = {4, 7, 8, 21, 23, 26, 14, 13, 18, 17};
+        int numCallees = calleeIDs.length;
+        partCaller Callees[] = new partCaller[numCallees];
+
+        for(int i = 0; i < numCallees; i++){
+            Callees[i] = new partCaller(p1Tree.getNodebyNum(rootNode,calleeCells[i]), calleeIDs[i], p1Group);
+        }
+
+        xPosField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                   String moveCell = xPosField.getText();
+
+                   partNode newCell = p1Tree.getNodebyNum(rootNode,Integer.parseInt(moveCell));
+
+                   if(newCell.isLeaf && !newCell.hasCaller) {
+                       userCaller.callerNode.hasCaller = false;
+                       userCaller.setCallerNode(newCell);
+                       userCaller.setUserCellPos(userCaller.callerNode.nodeNum);
+
+                       userCaller.updateCallerText();
+                       // TODO: UPDATE REPRESENTATIVE MEMORY OF NEW X LOCATION
+                   }
+
+                }
+            }
+        });
+
+        calleeField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    System.out.println(calleeField.getText());
+
+                    // Add function to handle where call is being sent to.
+                }
+            }
+        });
+
+
 
         // Get Shapes and text and draw on window.
 

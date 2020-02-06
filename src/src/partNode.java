@@ -28,6 +28,9 @@ public class partNode {
     boolean isInPart;
     boolean isRep;
     boolean isLeaf;
+    boolean hasCaller;
+
+
 
     partNode( String name, Group nodeGroup, int nodeNum){
 
@@ -40,6 +43,8 @@ public class partNode {
         nodeText.setX(this.nodeX - 5);
         nodeText.setY(this.nodeY + 5);
         initCircle(nodeGroup);
+        this.isLeaf = false;
+        this.hasCaller = false;
 
     }
 
@@ -54,6 +59,7 @@ public class partNode {
         nodeText.setX(this.nodeX - 5);
         nodeText.setY(this.nodeY + 5);
         initCircle(nodeGroup);
+        this.isLeaf = false;
 
     }
 
@@ -89,7 +95,5 @@ public class partNode {
         nodeText.setY(this.nodeY + 5);
 
     }
-
-
 
 }

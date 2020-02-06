@@ -1,6 +1,7 @@
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
 import java.lang.Math;
+import java.util.Stack;
 
 public class partTree {
 
@@ -160,6 +161,72 @@ public class partTree {
             inOrderGetNodeText(focusNode.middleChild,globalGroup);
             inOrderGetNodeText(focusNode.rightChild, globalGroup);
         }
+
+    }
+
+    public partNode getNodebyNum(partNode focusNode,int keyVal){
+
+        Stack<partNode> myStack = new Stack<>();
+        partNode findNode = null;
+
+        myStack.push(focusNode);
+
+        while(!myStack.empty()){
+
+            focusNode = myStack.peek();
+            myStack.pop();
+
+            if(focusNode.nodeNum == keyVal){
+
+                while(!myStack.isEmpty()) // Empty stack before exiting.
+                    myStack.pop();
+
+                return focusNode;
+            }
+
+            if(focusNode.leftChild != null)
+                myStack.push(focusNode.leftChild);
+
+            if(focusNode.middleChild != null)
+                myStack.push(focusNode.middleChild);
+
+            if(focusNode.rightChild != null)
+                myStack.push(focusNode.rightChild);
+
+        }
+
+        return null;
+
+    }
+
+    public void assignLeaves(partNode focusNode){
+
+        Stack<partNode> myStack = new Stack<>();
+        partNode findNode = null;
+
+        myStack.push(focusNode);
+
+        while(!myStack.empty()){
+
+            focusNode = myStack.peek();
+            myStack.pop();
+
+            if(focusNode.leftChild == null && focusNode.middleChild == null  && focusNode.rightChild == null){
+                focusNode.isLeaf = true;
+            }
+
+            if(focusNode.leftChild != null)
+                myStack.push(focusNode.leftChild);
+
+            if(focusNode.middleChild != null)
+                myStack.push(focusNode.middleChild);
+
+            if(focusNode.rightChild != null)
+                myStack.push(focusNode.rightChild);
+
+        }
+
+        return;
 
     }
 
