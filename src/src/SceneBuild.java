@@ -156,7 +156,6 @@ public class SceneBuild extends Application {
         int startPos = 3;
         partCaller userCaller = new partCaller(p1Tree.getNodebyNum(rootNode, startPos),"X",p1Group);
 
-
         String calleeIDs[] = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
         int calleeCells[] = {4, 7, 8, 21, 23, 26, 14, 13, 18, 17};
         int numCallees = calleeIDs.length;
@@ -164,6 +163,14 @@ public class SceneBuild extends Application {
 
         for(int i = 0; i < numCallees; i++){
             Callees[i] = new partCaller(p1Tree.getNodebyNum(rootNode,calleeCells[i]), calleeIDs[i], p1Group);
+        }
+
+
+
+        // Setup memory for representatives
+
+        for(int i = 0; i< treeReps.length; i++) {
+            treeReps[i].getLeafCallees(treeReps[i].repNode);
         }
 
         xPosField.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -177,11 +184,12 @@ public class SceneBuild extends Application {
 
                    if(newCell.isLeaf && !newCell.hasCaller) {
                        userCaller.callerNode.hasCaller = false;
+                       userCaller.callerNode.nodeRep.removeCallee(userCaller);
                        userCaller.setCallerNode(newCell);
                        userCaller.setUserCellPos(userCaller.callerNode.nodeNum);
 
                        userCaller.updateCallerText();
-                       // TODO: UPDATE REPRESENTATIVE MEMORY OF NEW X LOCATION
+                       userCaller.callerNode.nodeRep.addCallee(userCaller);
                    }
 
                 }
@@ -193,14 +201,25 @@ public class SceneBuild extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if(event.getCode().equals(KeyCode.ENTER)) {
-                    System.out.println(calleeField.getText());
+                    int calleeIdx = 0;
+                    String newCalleeID = calleeField.getText();
 
-                    // Add function to handle where call is being sent to.
+                    for(int i = 0; i < Callees.length; i++){
+
+                        if(Callees[i].callerID.equals(newCalleeID)){
+                            calleeIdx = i;
+                            break;
+                        }
+
+                    }
+
+                    p1Tree.clearLines(rootNode);
+                    p1Tree.resetLeaves(rootNode);
+                    p1Tree.searchCallees(userCaller, Callees[calleeIdx]);
+
                 }
             }
         });
-
-
 
         // Get Shapes and text and draw on window.
 

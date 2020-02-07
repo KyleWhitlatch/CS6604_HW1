@@ -14,6 +14,7 @@ public class partCaller {
 
         this.userCellPos = userCell.nodeNum;
         this.callerNode = userCell;
+        this.callerNode.nodeCaller = this;
         this.callerNode.hasCaller = true;
         this.callerID = callerID;
         callerText = new Text("^\n" + this.callerID);
@@ -40,7 +41,8 @@ public class partCaller {
 
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return callerID;
+    }
 }

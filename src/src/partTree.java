@@ -1,4 +1,5 @@
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import java.lang.Math;
 import java.util.Stack;
@@ -227,6 +228,169 @@ public class partTree {
         }
 
         return;
+
+    }
+
+    public void clearLines(partNode focusNode){
+
+        if (focusNode != null) {
+            if(focusNode.nodeLine != null) {
+                focusNode.nodeLine.setStrokeWidth(1.0); // Reset to default value.
+
+            }
+            clearLines(focusNode.leftChild);
+            clearLines(focusNode.middleChild);
+            clearLines(focusNode.rightChild);
+
+        }
+
+    }
+
+    public void resetLeaves(partNode focusNode){
+
+        if (focusNode != null) {
+            if(focusNode.isLeaf) {
+                focusNode.nodeCircle.setFill(Color.GREEN); // Reset to default value.
+
+            }
+
+            resetLeaves(focusNode.leftChild);
+            resetLeaves(focusNode.middleChild);
+            resetLeaves(focusNode.rightChild);
+
+        }
+
+    }
+
+    public void searchCallees(partCaller userCaller, partCaller userCallee){
+
+        traverseRep(userCaller.callerNode);
+        if(userCaller.callerNode.nodeRep.checkCallee(userCallee)){
+            repFindCallee(userCaller.callerNode.nodeRep, userCallee);
+        }else{
+            searchOtherReps(userCaller, userCallee);
+        }
+
+
+
+
+    }
+
+    public void traverseRep(partNode focusNode){
+
+        double lineWidth = 5.0;
+        focusNode.nodeLine.setStrokeWidth(lineWidth);
+
+        if(!focusNode.parent.isRep)
+            traverseRep(focusNode.parent);
+
+    }
+
+    public void repFindCallee(partRep searchingRep, partCaller userCallee){
+
+        Stack<partNode> repStack = new Stack<>();
+
+        partNode focusNode = searchingRep.repNode;
+        String callee = userCallee.callerID;
+        repStack.push(focusNode);
+
+        while(!repStack.empty()){
+
+            focusNode = repStack.peek();
+            repStack.pop();
+
+            if(focusNode != searchingRep.repNode){
+                if(focusNode.nodeLine != null){
+                    focusNode.nodeLine.setStrokeWidth(5.0);
+
+                }
+
+            }
+
+            if(focusNode.hasCaller) {
+                if (focusNode.nodeCaller.callerID == callee) {
+
+                    focusNode.nodeCircle.setFill(Color.GOLD);
+                    while (!repStack.isEmpty()) // Empty stack before exiting.
+                        repStack.pop();
+
+                    return;
+                }
+            }
+
+            if(focusNode.leftChild != null)
+                repStack.push(focusNode.leftChild);
+
+            if(focusNode.middleChild != null)
+                repStack.push(focusNode.middleChild);
+
+            if(focusNode.rightChild != null)
+                repStack.push(focusNode.rightChild);
+
+        }
+
+        return;
+
+    }
+
+    public void searchOtherReps(partCaller userCaller, partCaller userCallee){
+
+        partNode callerRepNode = userCaller.callerNode.nodeRep.repNode;
+        partNode focusNode;
+        Stack<partNode> repSearchStack = new Stack<>();
+        focusNode = callerRepNode;
+
+        // Get to root node.
+        while(true){
+
+            double lineWidth = 5.0;
+            focusNode.nodeLine.setStrokeWidth(lineWidth);
+
+            if(!focusNode.parent.name.equals("root")) {
+                focusNode = focusNode.parent;
+            }else{
+                focusNode = focusNode.parent;
+                break;
+            }
+
+        }
+
+        // Search for other rep nodes and check for callee.
+
+        repSearchStack.push(focusNode);
+
+        while(true){
+
+            focusNode = repSearchStack.peek();
+            repSearchStack.pop();
+
+            if(focusNode.nodeLine != null)
+                focusNode.nodeLine.setStrokeWidth(5.0);
+
+            if(focusNode.isRep){
+                if(focusNode.repInNode.checkCallee(userCallee)) {
+                    repFindCallee(focusNode.repInNode, userCallee);
+                    return;
+                }
+            }else {
+
+                if (focusNode.leftChild != null)
+                    repSearchStack.push(focusNode.leftChild);
+
+                if (focusNode.rightChild != null)
+                    repSearchStack.push(focusNode.rightChild);
+
+                if (focusNode.middleChild != null)
+                    repSearchStack.push(focusNode.middleChild);
+            }
+
+        }
+
+
+
+
+
+
 
     }
 

@@ -29,8 +29,9 @@ public class partNode {
     boolean isRep;
     boolean isLeaf;
     boolean hasCaller;
-
-
+    partRep repInNode;
+    partCaller nodeCaller;
+    partRep nodeRep;
 
     partNode( String name, Group nodeGroup, int nodeNum){
 
