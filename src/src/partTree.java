@@ -1,7 +1,8 @@
+// This class handles the node searching functions and general tree structure for the partition scheme.
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import java.lang.Math;
 import java.util.Stack;
 
 public class partTree {
@@ -12,7 +13,7 @@ public class partTree {
     Group treeGroup;
     partNode root;
 
-    // Constructor for partTree
+    // Basic constructor for partTree
     public partTree(int numLayers, Group p1group, int globalX, int globalY) {
 
         this.numLayers = numLayers;
@@ -22,13 +23,14 @@ public class partTree {
 
     }
 
-    // Adds nodes to tree with key and name.
+    // Adds nodes to tree.
     public partNode addNode(String name,partNode parentNode, int treeLayer, int nodeNum) {
 
         int yshift = 80; // Adjust to change distance between levels.
 
         int initXShift = 250; // Initial shift for first layer.
 
+        // Handle if root exists, if not add new node.
         if (name == "root") {
 
             partNode root = new partNode(name, treeGroup, globalX / 2, 50, nodeNum);
@@ -49,11 +51,13 @@ public class partTree {
 
             xshift = initXShift;
 
+            // Change amount to shift nodes by depending on layer of tree in X and Y
             if(treeLayer != 1)
                 xshift = (int)(initXShift / (2*treeLayer));
 
             yshift = yshift/treeLayer;
 
+            // Logic for handling which branch to traverse to add new node.
             if (name == "Left") {
 
                 focusNode = focusNode.leftChild;
@@ -111,7 +115,7 @@ public class partTree {
 
     }
 
-    // Generates lines for each node (apart from root). Lines are assigned to children from each node.
+    // Generates lines for each node from given parent (apart from root). Lines are assigned to children from each node.
     public void inOrderAddLines(partNode focusNode, Group globalGroup) {
 
         Line newLine = new Line();
@@ -154,6 +158,7 @@ public class partTree {
 
     }
 
+    // Adds text to global group for each node.
     public void inOrderGetNodeText(partNode focusNode, Group globalGroup) {
 
         if (focusNode != null) {
@@ -165,6 +170,7 @@ public class partTree {
 
     }
 
+    // Returns the correct node for a given number value.
     public partNode getNodebyNum(partNode focusNode,int keyVal){
 
         Stack<partNode> myStack = new Stack<>();
@@ -200,6 +206,7 @@ public class partTree {
 
     }
 
+    // Updates the isLeaf variable for each node in the tree if a node is a leaf.
     public void assignLeaves(partNode focusNode){
 
         Stack<partNode> myStack = new Stack<>();
@@ -231,6 +238,7 @@ public class partTree {
 
     }
 
+    // Resets lines to their default thickness for the entire tree.
     public void clearLines(partNode focusNode){
 
         if (focusNode != null) {
@@ -246,6 +254,7 @@ public class partTree {
 
     }
 
+    // Resets the altered leaf nodes to their default green color.
     public void resetLeaves(partNode focusNode){
 
         if (focusNode != null) {
@@ -262,6 +271,7 @@ public class partTree {
 
     }
 
+    //Handles function calls for finding a callee with the appropriate rep.
     public void searchCallees(partCaller userCaller, partCaller userCallee){
 
         traverseRep(userCaller.callerNode);
@@ -271,11 +281,9 @@ public class partTree {
             searchOtherReps(userCaller, userCallee);
         }
 
-
-
-
     }
 
+    // Handles traversing from a leaf node to a representative and updating line drawings.
     public void traverseRep(partNode focusNode){
 
         double lineWidth = 5.0;
@@ -286,6 +294,7 @@ public class partTree {
 
     }
 
+    // Handles a rep searching with a stack for a certain callee.
     public void repFindCallee(partRep searchingRep, partCaller userCallee){
 
         Stack<partNode> repStack = new Stack<>();
@@ -333,6 +342,7 @@ public class partTree {
 
     }
 
+    // Handles a single rep searching for other reps on the main branch from the root node.
     public void searchOtherReps(partCaller userCaller, partCaller userCallee){
 
         partNode callerRepNode = userCaller.callerNode.nodeRep.repNode;
@@ -356,7 +366,6 @@ public class partTree {
         }
 
         // Search for other rep nodes and check for callee.
-
         repSearchStack.push(focusNode);
 
         while(true){
@@ -382,15 +391,11 @@ public class partTree {
 
                 if (focusNode.middleChild != null)
                     repSearchStack.push(focusNode.middleChild);
+
+
             }
 
         }
-
-
-
-
-
-
 
     }
 

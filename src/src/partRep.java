@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class partRep {
 
     int numLeaves = 0; // == max Callers in cell
-    partNode repNode;
-    ArrayList<String> repCallees;
+    partNode repNode; // The rep's node
+    ArrayList<String> repCallees; // The callees that belong to the rep
     int repCalleeIdx = 0;
 
 

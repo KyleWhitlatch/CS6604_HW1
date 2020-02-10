@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+// This class handles each node on the tree structure along with their XY coordinates and shape.
 public class partNode {
 
     // General node vars.
@@ -15,7 +16,6 @@ public class partNode {
     Color nodeColor;
     Text nodeText;
     Line nodeLine;
-    Group nodeGroup;
     String name;
 
     // General tree structure vars.
@@ -24,7 +24,7 @@ public class partNode {
     partNode middleChild;
     partNode rightChild;
 
-    // Representative vars
+    // Representative handling vars for logic and passing info btwn rep and leaf node
     boolean isInPart;
     boolean isRep;
     boolean isLeaf;
@@ -33,6 +33,7 @@ public class partNode {
     partCaller nodeCaller;
     partRep nodeRep;
 
+    // Constructor for partNode without given initial XY position.
     partNode( String name, Group nodeGroup, int nodeNum){
 
         this.name = name;
@@ -49,6 +50,7 @@ public class partNode {
 
     }
 
+    // Constructor for partNode with initial position.
     partNode(String name, Group nodeGroup,int nodeX, int nodeY, int nodeNum){
 
         this.name = name;
@@ -64,7 +66,7 @@ public class partNode {
 
     }
 
-    // Sets nodes level is tree.
+    // Sets nodes level is tree. (Not used in P1, maybe in P3)
     public void setTreeLevel(int treeLevel) {
         this.treeLevel = treeLevel;
     }
@@ -84,7 +86,7 @@ public class partNode {
 
     }
 
-    // Set XY coordinates for a node.
+    // Set XY coordinates for a node and update circle position.
     public void setNodeXY(int nodeX, int nodeY){
         this.nodeX = nodeX;
         this.nodeY = nodeY;

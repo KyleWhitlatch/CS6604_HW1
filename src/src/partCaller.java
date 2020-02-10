@@ -1,4 +1,4 @@
-// This class contains searching logic for caller.
+// This class contains the node "memory" vars for handling caller/callee logic, such as caller ID
 
 import javafx.scene.Group;
 import javafx.scene.text.Text;
@@ -10,6 +10,7 @@ public class partCaller {
     String callerID;
     Text callerText;
 
+    // Constructor for new caller/callee, parses caller ID from user input.
     partCaller(partNode userCell, String callerID,Group callGroup){
 
         this.userCellPos = userCell.nodeNum;
@@ -34,6 +35,7 @@ public class partCaller {
 
     }
 
+    // Update position of caller text.
     public void updateCallerText(){
 
         callerText.setX(callerNode.nodeX - 5);
