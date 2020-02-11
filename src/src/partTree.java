@@ -7,16 +7,14 @@ import java.util.Stack;
 
 public class partTree {
 
-    int numLayers;
     int globalX;
     int globalY;
     Group treeGroup;
     partNode root;
 
     // Basic constructor for partTree
-    public partTree(int numLayers, Group p1group, int globalX, int globalY) {
+    public partTree( Group p1group, int globalX, int globalY) {
 
-        this.numLayers = numLayers;
         this.treeGroup = p1group;
         this.globalX = globalX;
         this.globalY = globalY;

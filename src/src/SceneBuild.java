@@ -15,6 +15,9 @@ import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.scene.input.*;
+
+import java.util.ArrayList;
+
 public class SceneBuild extends Application {
 
     public static void main(String[] args) {
@@ -102,7 +105,7 @@ public class SceneBuild extends Application {
 
         // Setup the tree structure.
         Group p1Group = new Group();
-        partTree p1Tree = new partTree(2,p1Group,globalPosX,globalPosY);
+        partTree p1Tree = new partTree(p1Group,globalPosX,globalPosY);
         partNode nodeArray[] = new partNode[50];
 
         // Setup tree creation vars, these can be changed depending on the type of tree.
@@ -253,10 +256,201 @@ public class SceneBuild extends Application {
     }
 
     // Problem 3: Create dynamic tree-structure scheme with pointers.
+
+    // Prob 3 "Global" vars
+    int numLevels;
+    boolean treeCreated;
+    pointTree p3Tree;
+    pointNode nodeArray[];
+    pointNode rootNode;
     public void p3solution(){
+
+        int globalPosX = 900;
+        int globalPosY = 600;
+
         Stage p3stage = new Stage();
 
+        // Create user input gridpane with customization buttons.
+        Label treeLabel = new Label("Tree Customization");
+        Label treelvlLabel = new Label("Select # of Tree Levels (Best: 2-5)");
+        TextField treelvltext = new TextField("3");
+        Button createTreeButton = new Button("Create!");
 
+        Label inLabel = new Label("User Inputs");
+        Label xLabel = new Label("X Position (No overlap)");
+        Label callLabel = new Label("Select Caller");
+        TextField xPosField = new TextField("3");
+        TextField calleeField = new TextField("A");
+
+        GridPane mygrid = new GridPane();
+
+        mygrid.add(treeLabel,0,0);
+        mygrid.add(treelvltext,0,1); mygrid.add(treelvlLabel, 1, 1);
+        mygrid.add(createTreeButton,0,2);
+        mygrid.add(inLabel, 0,3);
+        mygrid.add(xPosField,0,4); mygrid.add(xLabel,1,4);
+        mygrid.add(calleeField,0,5); mygrid.add(callLabel,1,5);
+        mygrid.setAlignment(Pos.TOP_LEFT);
+
+        // Setup the tree structure.
+        Group p3Group = new Group();
+        p3Tree = new pointTree(p3Group,globalPosX,globalPosY,1);
+        nodeArray = new pointNode[1000];
+        treeCreated = false;
+
+        // Declare objects shared between button calls.
+        nodeArray[0] = p3Tree.addNode("root", null, 0, 0);
+        rootNode = nodeArray[0];
+        rootNode.setTreeLevel(0);
+        numLevels = 3;
+
+
+        // Get tree levels from user.
+        treelvltext.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+
+                    // Get user defined tree # levels.
+                    String numlvlsString = treelvltext.getText();
+                    numLevels = Integer.parseInt(numlvlsString);
+
+                }
+            }
+        });
+
+        createTreeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                    // Create Tree node hierarchy based on tree creation vars.
+
+                    if(treeCreated)
+                        return;
+
+
+                    if(numLevels > 8) // Max levels
+                        return;
+
+                    treeCreated = true;
+                    p3Tree.createTree(rootNode, numLevels,nodeArray);
+
+                    // Find number of callees (0.5 * numleaves) and generate callees with random CMR
+
+                    int numleaves = 3*(int)Math.pow((double)(numLevels-1),2);
+                    int numCallees = (numleaves/2) ;
+
+                    pointCaller Callees[] = new pointCaller[numCallees];
+                    String calleeIDs[] = new String[numCallees];
+                    ArrayList<pointNode> leafList = new ArrayList<pointNode>();
+
+                    for(int i = 0; i < numCallees; i++)
+                        calleeIDs[i] = "" + i;
+
+                    for(int i = 0; i < nodeArray.length; i++){
+
+                        if(nodeArray[i] == null)
+                            break;
+
+                        if(nodeArray[i].isLeaf) {
+                            leafList.add(nodeArray[i]);
+                        }
+
+                    }
+
+                    p3Tree.initRandCallees(leafList, Callees, calleeIDs, p3Group);
+
+
+//                    // Setup caller and callees and event handling for user inputs
+//                    int startPos = 3;
+//                    partCaller userCaller = new partCaller(p3Tree.getNodebyNum(rootNode, startPos),"X",p3Group);
+//
+//                    // Setup callee node positions
+//                    String calleeIDs[] = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+//                    int calleeCells[] = {4, 7, 8, 21, 23, 26, 14, 13, 18, 17};
+//                    int numCallees = calleeIDs.length;
+//                    partCaller Callees[] = new partCaller[numCallees];
+//
+//                    for(int i = 0; i < numCallees; i++){
+//                        Callees[i] = new partCaller(p3Tree.getNodebyNum(rootNode,calleeCells[i]), calleeIDs[i], p3Group);
+//                    }
+
+
+                    // Get Shapes and text and draw on window.
+                    p3Tree.inOrderAddLines(p3Tree.root, p3Group);
+                    p3Tree.inOrderGetNodeShapes(p3Tree.root, p3Group);
+                    p3Tree.inOrderGetNodeText(p3Tree.root, p3Group);
+
+
+
+                }
+
+        });
+
+        // Update caller node position on user update.
+        xPosField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    // Get new caller position.
+                    String moveCell = xPosField.getText();
+                    // Get the node belonging to new caller position.
+//                    partNode newCell = p3Tree.getNodebyNum(rootNode,Integer.parseInt(moveCell));
+//
+//                    // Check that the selected node is a leaf node and doesn't have another caller.
+//                    if(newCell.isLeaf && !newCell.hasCaller) {
+//                        // Update caller position in old cell and at old rep.
+//                        userCaller.callerNode.hasCaller = false;
+//                        userCaller.callerNode.nodeRep.removeCallee(userCaller);
+//                        // Update caller position in new cell and at new rep.
+//                        userCaller.setCallerNode(newCell);
+//                        userCaller.setUserCellPos(userCaller.callerNode.nodeNum);
+//                        userCaller.updateCallerText();
+//                        userCaller.callerNode.nodeRep.addCallee(userCaller);
+//                    }
+
+                }
+            }
+        });
+
+        // Make call to callee on user update.
+        calleeField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    // Get callee ID
+                    int calleeIdx = 0;
+                    String newCalleeID = calleeField.getText();
+                    // Check which callee is being called.
+//                    for(int i = 0; i < Callees.length; i++){
+//
+//                        if(Callees[i].callerID.equals(newCalleeID)){
+//                            calleeIdx = i;
+//                            break;
+//                        }
+//
+//                    }
+//
+//                    // Clear previous drawings if any, and search for Callee.
+//                    p3Tree.clearLines(rootNode);
+//                    p3Tree.resetLeaves(rootNode);
+//                    p3Tree.searchCallees(userCaller, Callees[calleeIdx]);
+
+                }
+            }
+        });
+
+
+        // Update and display scene.
+        p3Group.getChildren().add(mygrid);
+        Scene mys = new Scene(p3Group, globalPosX , globalPosY);
+        p3stage.setScene(mys);
+        p3stage.setTitle("Problem #3 Solution");
+        p3stage.show();
 
     }
 

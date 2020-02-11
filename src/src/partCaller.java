@@ -11,6 +11,8 @@ public class partCaller {
     Text callerText;
 
     // Constructor for new caller/callee, parses caller ID from user input.
+    partCaller(){
+    }
     partCaller(partNode userCell, String callerID,Group callGroup){
 
         this.userCellPos = userCell.nodeNum;
