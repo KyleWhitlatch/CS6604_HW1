@@ -263,6 +263,9 @@ public class SceneBuild extends Application {
     pointTree p3Tree;
     pointNode nodeArray[];
     pointNode rootNode;
+    pointCaller xCaller;
+    pointCaller[] Callees;
+    pointCaller newCaller;
     public void p3solution(){
 
         int globalPosX = 900;
@@ -275,21 +278,24 @@ public class SceneBuild extends Application {
         Label treelvlLabel = new Label("Select # of Tree Levels (Best: 2-5)");
         TextField treelvltext = new TextField("3");
         Button createTreeButton = new Button("Create!");
-
         Label inLabel = new Label("User Inputs");
         Label xLabel = new Label("X Position (No overlap)");
         Label callLabel = new Label("Select Caller");
-        TextField xPosField = new TextField("3");
-        TextField calleeField = new TextField("A");
+        Label cmrLabel = new Label("Init. X CMR");
+        TextField xPosField = new TextField("0");
+        TextField xcmrin = new TextField("5");
+        TextField calleeField = new TextField("1");
 
         GridPane mygrid = new GridPane();
 
+        // Setup grid.
         mygrid.add(treeLabel,0,0);
         mygrid.add(treelvltext,0,1); mygrid.add(treelvlLabel, 1, 1);
         mygrid.add(createTreeButton,0,2);
         mygrid.add(inLabel, 0,3);
         mygrid.add(xPosField,0,4); mygrid.add(xLabel,1,4);
-        mygrid.add(calleeField,0,5); mygrid.add(callLabel,1,5);
+        mygrid.add(xcmrin,0,5); mygrid.add(cmrLabel,1,5);
+        mygrid.add(calleeField,0,6); mygrid.add(callLabel,1,6);
         mygrid.setAlignment(Pos.TOP_LEFT);
 
         // Setup the tree structure.
@@ -303,7 +309,6 @@ public class SceneBuild extends Application {
         rootNode = nodeArray[0];
         rootNode.setTreeLevel(0);
         numLevels = 3;
-
 
         // Get tree levels from user.
         treelvltext.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -320,6 +325,7 @@ public class SceneBuild extends Application {
             }
         });
 
+        // Handles tree creation on user command.
         createTreeButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -327,10 +333,11 @@ public class SceneBuild extends Application {
 
                     // Create Tree node hierarchy based on tree creation vars.
 
+                // Check if tree already created.
                     if(treeCreated)
                         return;
 
-
+                    // Dont make too many levels and overflow nodeArray.
                     if(numLevels > 8) // Max levels
                         return;
 
@@ -340,15 +347,19 @@ public class SceneBuild extends Application {
                     // Find number of callees (0.5 * numleaves) and generate callees with random CMR
 
                     int numleaves = 3*(int)Math.pow((double)(numLevels-1),2);
-                    int numCallees = (numleaves/2) ;
+                    int numCallees = (numleaves/2) + 1 ; // plus 1 for X
 
-                    pointCaller Callees[] = new pointCaller[numCallees];
-                    String calleeIDs[] = new String[numCallees];
+                    Callees = new pointCaller[numCallees + 1];
+                    String calleeIDs[] = new String[numCallees + 1];
                     ArrayList<pointNode> leafList = new ArrayList<pointNode>();
 
-                    for(int i = 0; i < numCallees; i++)
+                    for(int i = 0; i < (numCallees+1); i++) {
                         calleeIDs[i] = "" + i;
+                        if(i == numCallees)
+                            calleeIDs[i] = "X";
+                    }
 
+                    // Get array of leaf nodes.
                     for(int i = 0; i < nodeArray.length; i++){
 
                         if(nodeArray[i] == null)
@@ -360,30 +371,18 @@ public class SceneBuild extends Application {
 
                     }
 
-                    p3Tree.initRandCallees(leafList, Callees, calleeIDs, p3Group);
-
-
-//                    // Setup caller and callees and event handling for user inputs
-//                    int startPos = 3;
-//                    partCaller userCaller = new partCaller(p3Tree.getNodebyNum(rootNode, startPos),"X",p3Group);
-//
-//                    // Setup callee node positions
-//                    String calleeIDs[] = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-//                    int calleeCells[] = {4, 7, 8, 21, 23, 26, 14, 13, 18, 17};
-//                    int numCallees = calleeIDs.length;
-//                    partCaller Callees[] = new partCaller[numCallees];
-//
-//                    for(int i = 0; i < numCallees; i++){
-//                        Callees[i] = new partCaller(p3Tree.getNodebyNum(rootNode,calleeCells[i]), calleeIDs[i], p3Group);
-//                    }
-
+                    // Initialize other callees and setup caller X
+                    xCaller = p3Tree.initRandCallees(leafList, Callees, calleeIDs, p3Group);
+                    xCaller.pointCallerNode.hasCallerX = true;
+                    xCaller.CMR = 5; // Initial CMR
+                    xPosField.setText("" + xCaller.callerNode.nodeNum);
+                    xCaller.setMaxUpdateLayer(numLevels);
+                    xCaller.initPointers();
 
                     // Get Shapes and text and draw on window.
                     p3Tree.inOrderAddLines(p3Tree.root, p3Group);
                     p3Tree.inOrderGetNodeShapes(p3Tree.root, p3Group);
                     p3Tree.inOrderGetNodeText(p3Tree.root, p3Group);
-
-
 
                 }
 
@@ -398,19 +397,15 @@ public class SceneBuild extends Application {
                     // Get new caller position.
                     String moveCell = xPosField.getText();
                     // Get the node belonging to new caller position.
-//                    partNode newCell = p3Tree.getNodebyNum(rootNode,Integer.parseInt(moveCell));
-//
-//                    // Check that the selected node is a leaf node and doesn't have another caller.
-//                    if(newCell.isLeaf && !newCell.hasCaller) {
-//                        // Update caller position in old cell and at old rep.
-//                        userCaller.callerNode.hasCaller = false;
-//                        userCaller.callerNode.nodeRep.removeCallee(userCaller);
-//                        // Update caller position in new cell and at new rep.
-//                        userCaller.setCallerNode(newCell);
-//                        userCaller.setUserCellPos(userCaller.callerNode.nodeNum);
-//                        userCaller.updateCallerText();
-//                        userCaller.callerNode.nodeRep.addCallee(userCaller);
-//                    }
+                    pointNode newCell = p3Tree.getNodebyNum(rootNode,Integer.parseInt(moveCell));
+
+                    // Check that the selected node is a leaf node and doesn't have another caller.
+                    if(newCell.isLeaf && !newCell.hasCaller) {
+                        // Update caller position in old cell and at old rep.
+                        xCaller.updateLocAndPointers(newCell, p3Tree);
+                        xCaller.updateCallerText();
+
+                    }
 
                 }
             }
@@ -422,28 +417,43 @@ public class SceneBuild extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if(event.getCode().equals(KeyCode.ENTER)) {
-                    // Get callee ID
-                    int calleeIdx = 0;
+
                     String newCalleeID = calleeField.getText();
                     // Check which callee is being called.
-//                    for(int i = 0; i < Callees.length; i++){
-//
-//                        if(Callees[i].callerID.equals(newCalleeID)){
-//                            calleeIdx = i;
-//                            break;
-//                        }
-//
-//                    }
-//
+                    for(int i = 0; i < Callees.length; i++){
+
+                        if(Callees[i].callerID.equals(newCalleeID)){
+                            newCaller = Callees[i];
+                            break;
+                        }
+
+                    }
+
 //                    // Clear previous drawings if any, and search for Callee.
-//                    p3Tree.clearLines(rootNode);
-//                    p3Tree.resetLeaves(rootNode);
-//                    p3Tree.searchCallees(userCaller, Callees[calleeIdx]);
+                    p3Tree.clearAllLines(rootNode, p3Group);
+                    p3Tree.resetLeaves(rootNode);
+                    p3Tree.searchForX(newCaller, xCaller);
 
                 }
             }
         });
 
+        // Handles updating of caller X cmr with user command.
+        xcmrin.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+
+                    // Update caller X cmr
+                    String newcmr = xcmrin.getText();
+
+                    xCaller.CMR = Integer.parseInt(newcmr);
+                    xCaller.setMaxUpdateLayer(numLevels);
+
+                }
+            }
+        });
 
         // Update and display scene.
         p3Group.getChildren().add(mygrid);

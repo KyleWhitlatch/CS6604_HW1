@@ -1,4 +1,7 @@
+// This class inherits from the tree structure in part one and adds some new functions to handle forwarding pointers.
+
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
@@ -10,14 +13,17 @@ public class pointTree extends partTree {
     pointNode root;
     int index; // Used for recursive creation, starts at 1.
 
+    ArrayList<Line> levelLines;
+
     pointTree(Group treeGroup, int treeX, int treeY, int index) {
 
         super(treeGroup, treeX, treeY);
         this.index = index;
-
+        levelLines = new ArrayList<>();
 
     }
 
+    // Creates the tree and initializes shapes.
     public void createTree(pointNode focusNode, int numLevels, pointNode[] nodeArray) {
 
         // Check if we have reached the (n-1) tree level, if so, create leaves and return.
@@ -26,14 +32,17 @@ public class pointTree extends partTree {
             // THREE LEAF NODES PER N-1 BRANCH
             focusNode.leftChild = addNode("" + index, focusNode, numLevels, index);
             focusNode.leftChild.isLeaf = true;
+            focusNode.leftChild.setTreeLevel(focusNode.treeLevel+1);
             nodeArray[index] = focusNode.leftChild;
             index++;
             focusNode.middleChild = addNode("" + index, focusNode, numLevels, index);
             focusNode.middleChild.isLeaf = true;
+            focusNode.middleChild.setTreeLevel(focusNode.treeLevel+1);
             nodeArray[index] = focusNode.middleChild;
             index++;
             focusNode.rightChild = addNode("" + index, focusNode, numLevels, index);
             focusNode.rightChild.isLeaf = true;
+            focusNode.rightChild.setTreeLevel(focusNode.treeLevel+1);
             nodeArray[index] = focusNode.rightChild;
             index++;
 
@@ -61,6 +70,7 @@ public class pointTree extends partTree {
 
     }
 
+    // Adds a node to the in-construction tree.
     public pointNode addNode(String name, pointNode parentNode, int treeLayer, int nodeNum) {
 
         int yshift = 60; // Adjust to change distance between levels.
@@ -135,6 +145,7 @@ public class pointTree extends partTree {
 
     }
 
+    // Adds lines to the created nodes.
     public void inOrderAddLines(pointNode focusNode, Group globalGroup) {
 
         Line newLine = new Line();
@@ -190,7 +201,7 @@ public class pointTree extends partTree {
     }
 
     // Returns the correct node for a given number value.
-    public partNode getNodebyNum(pointNode focusNode,int keyVal){
+    public pointNode getNodebyNum(pointNode focusNode,int keyVal){
 
         Stack<pointNode> myStack = new Stack<>();
         pointNode findNode = null;
@@ -225,7 +236,8 @@ public class pointTree extends partTree {
 
     }
 
-    public void initRandCallees (ArrayList<pointNode> inArray, pointCaller[] callArray, String [] calleeIDs, Group p3group){
+    // Initializes other non-user callers.
+    public pointCaller initRandCallees (ArrayList<pointNode> inArray, pointCaller[] callArray, String [] calleeIDs, Group p3group){
 
         for(int i = 0; i < callArray.length; i++){
             boolean cellfound = false;
@@ -243,13 +255,116 @@ public class pointTree extends partTree {
 
         }
 
+        return callArray[callArray.length-1]; // Return X caller.
+
     }
 
+    // Gets random index from pointNode array.
     public static pointNode getRandom(ArrayList<pointNode> array) {
         int rnd = new Random().nextInt(array.size());
         return array.get(rnd);
     }
 
+    // Main function to search for caller X. (user)
+    public void searchForX(pointCaller newCaller, pointCaller callerX){
+
+        double lineWidth = 5.0;
+        traverseRoot(newCaller.pointCallerNode);
+
+        pointNode traverseNode = root;
+        pointNode prevNode = traverseNode;
+
+        while(!traverseNode.hasCallerX){
+
+            traverseNode = getNodebyNum(root,traverseNode.getCallerPointer(callerX.callerID).nextLoc);
+
+            if(traverseNode.parent == prevNode){
+                // Update basic tree lines
+                traverseNode.nodeLine.setStrokeWidth(lineWidth);
+
+            }else{
+
+                // Update level Lines
+                traverseNode.levelLine.setStrokeWidth(5);
+
+            }
+
+            prevNode = traverseNode;
+
+        }
+
+        // Found caller X! Rejoice!
+        traverseNode.nodeCircle.setFill(Color.GOLD);
+
+        return;
+
+    }
+
+    // Adds a level line to the tree structure.
+    public void addLevelLine(pointNode N1, pointNode N2){
+
+        Line newLine = new Line(N1.nodeX,N1.nodeY,N2.nodeX,N2.nodeY);
+        newLine.setStrokeWidth(1);
+        treeGroup.getChildren().add(newLine);
+        levelLines.add(newLine);
+        N1.addCaller(N2.nodeNum,"X");
+        N2.levelLine = newLine;
+
+
+    }
+
+    // Clears all lines including level lines
+    public void clearAllLines(pointNode focusNode, Group p3Group){
+
+            clearLines(focusNode);
+
+    }
+
+    // Resets node lines to their default thickness for the entire tree.
+    public void clearLines(pointNode focusNode){
+
+        if (focusNode != null) {
+            if(focusNode.nodeLine != null) {
+                focusNode.nodeLine.setStrokeWidth(1.0); // Reset to default value.
+            }
+            clearLines(focusNode.leftChild);
+            clearLines(focusNode.middleChild);
+            clearLines(focusNode.rightChild);
+
+        }
+
+    }
+
+    // Resets the altered leaf nodes to their default green color.
+    public void resetLeaves(pointNode focusNode){
+
+        if (focusNode != null) {
+
+            focusNode.pointidx = 0; // Reset multiple pointers counter.
+
+            if(focusNode.isLeaf) {
+                focusNode.nodeCircle.setFill(Color.GREEN); // Reset to default value.
+
+            }
+
+            resetLeaves(focusNode.leftChild);
+            resetLeaves(focusNode.middleChild);
+            resetLeaves(focusNode.rightChild);
+
+        }
+
+    }
+
+    // Traverses to the root node and marks path.
+    public void traverseRoot(pointNode focusNode){
+
+        double lineWidth = 5.0;
+        focusNode.nodeLine.setStrokeWidth(lineWidth);
+
+        if(!(focusNode.parent == root))
+            traverseRoot(focusNode.parent);
+
+    }
 
 
 }
