@@ -12,11 +12,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.scene.input.*;
 
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class SceneBuild extends Application {
 
@@ -250,9 +253,87 @@ public class SceneBuild extends Application {
     // Problem 2: Create working set scheme.
     public void p2solution(){
         Stage p2stage = new Stage();
+        int globalPosX = 900;
+        int globalPosY = 250;
+
+        // Create user input gridpane with customization buttons.
+        Label inLabel = new Label("User Inputs");
+        Label histLabel = new Label("Select # of towers to hold information");
+        Label locLabel = new Label("Select Location");
+        TextField histField = new TextField("3");
+        TextField locField = new TextField("A");
+        ArrayList<String> history = new ArrayList<>();
+
+
+        GridPane mygrid = new GridPane();
+        Circle nodeArray[] = new Circle[10];
+        Label hasInfo[] = new Label[10];
+        Label nodeLabel[] = new Label[10];
+
+        mygrid.add(inLabel,0,0);
+        mygrid.add(histLabel,0,1);
+        mygrid.add(locLabel,0,3);
+        mygrid.add(histField,0,2);
+        mygrid.add(locField,0,4);
+
+        for(int x = 0; x <  nodeArray.length; x++){
+            hasInfo[x] = new Label("X");
+            nodeArray[x] = new Circle(20);
+            nodeLabel[x] = new Label(""+(char)(65+x)); //don't worry about it
+            mygrid.add(hasInfo[x],x+2,2);
+            mygrid.add(nodeArray[x], x+2,3);
+            mygrid.add(nodeLabel[x],x+2,4);
+        }
+        histField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(history.size() > Integer.parseInt(histField.getText())){
+                    for(int x = history.size(); x <= Integer.parseInt(histField.getText());x++)
+                        history.remove(x);
+                    history.trimToSize();
+                }
+            }
+        });
+        locField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                history.add(0,locField.getText());
+                updateHistory(history,hasInfo);
+                updateLocation(locField.getText(),nodeLabel);
+            }
+        });
 
 
 
+
+
+
+
+        Scene s = new Scene(mygrid,globalPosX,globalPosY);
+        p2stage.setScene(s);
+        p2stage.setTitle("Problem 2 - Working Sets");
+        p2stage.show();
+
+    }
+    public void updateHistory(ArrayList<String> h, Label[] n){
+        char c;
+        for(Label l : n){
+            l.setText("X");
+        }
+        for(String s : h){
+            c = s.charAt(0);
+            n[c-65].setText("✓");
+        }
+    }
+    public void updateLocation(String l, Label[] n){
+        for(int x = 0; x < n.length; x++){
+            n[x].setText((char)(65-x)+"");
+        }
+        for(Label s : n){
+            if(s.getText().equalsIgnoreCase(l)){
+                s.setText(s.getText()+"*");
+            }
+        }
     }
 
     // Problem 3: Create dynamic tree-structure scheme with pointers.
