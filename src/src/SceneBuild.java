@@ -20,6 +20,7 @@ import javafx.scene.input.*;
 
 import java.util.ArrayList;
 import java.util.Queue;
+import javafx.*;
 
 public class SceneBuild extends Application {
 
@@ -285,22 +286,37 @@ public class SceneBuild extends Application {
             mygrid.add(nodeLabel[x],x+2,4);
         }
         histField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
             @Override
             public void handle(KeyEvent event) {
-                if(history.size() > Integer.parseInt(histField.getText())){
-                    for(int x = history.size(); x <= Integer.parseInt(histField.getText());x++)
-                        history.remove(x);
-                    history.trimToSize();
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    if(history.size() > Integer.parseInt(histField.getText())){
+                        for(int x = history.size(); x <= Integer.parseInt(histField.getText());x++)
+                            history.remove(x);
+                        history.trimToSize();
+                    }
+
                 }
             }
+
+
+
         });
         locField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
             @Override
             public void handle(KeyEvent event) {
-                history.add(0,locField.getText());
-                updateHistory(history,hasInfo);
-                updateLocation(locField.getText(),nodeLabel);
+                if(event.getCode().equals(KeyCode.ENTER)) {
+
+
+                    history.add(0,locField.getText());
+                    updateHistory(history,hasInfo);
+                    updateLocation(locField.getText(),nodeLabel);
+
+                }
             }
+
+
         });
 
 
