@@ -289,11 +289,18 @@ public class SceneBuild extends Application {
 
             @Override
             public void handle(KeyEvent event) {
+                System.out.println("Handling the history field" + history.toString());
                 if(event.getCode().equals(KeyCode.ENTER)) {
+                    System.out.println(""+history.size()+" "+Integer.parseInt(histField.getText()));
+                    System.out.println((history.size() > Integer.parseInt(histField.getText())));
                     if(history.size() > Integer.parseInt(histField.getText())){
-                        for(int x = history.size(); x <= Integer.parseInt(histField.getText());x++)
+                        for(int x = history.size()-1; x >= Integer.parseInt(histField.getText());x--) {
+                            System.out.println(history.get(x));
                             history.remove(x);
-                        history.trimToSize();
+                        }
+                        //history.trimToSize();
+                        System.out.println(history.size());
+                        System.out.println(history.toString());
                     }
 
                 }
@@ -308,11 +315,18 @@ public class SceneBuild extends Application {
             public void handle(KeyEvent event) {
                 if(event.getCode().equals(KeyCode.ENTER)) {
 
+                    //just don't worry about this indexing, I promise it works
 
-                    history.add(0,locField.getText());
-                    updateHistory(history,hasInfo);
-                    updateLocation(locField.getText(),nodeLabel);
+                        history.add(0, locField.getText());
+                        if (history.size() > Integer.parseInt(histField.getText())) {
+                            for (int x = history.size() - 1; x >= Integer.parseInt(histField.getText()); x--)
+                                history.remove(x);
+                        //history.trimToSize();
+                        updateHistory(history, hasInfo);
+                        updateLocation(locField.getText(), nodeLabel);
 
+
+                    }
                 }
             }
 
@@ -336,14 +350,15 @@ public class SceneBuild extends Application {
         for(Label l : n){
             l.setText("X");
         }
-        for(String s : h){
+        for(String s : h){ //welcome to Java 8
             c = s.charAt(0);
-            n[c-65].setText("✓");
+            n[c-65].setText("✓"); //hope you can read ASCII
         }
     }
     public void updateLocation(String l, Label[] n){
         for(int x = 0; x < n.length; x++){
-            n[x].setText((char)(65-x)+"");
+//            System.out.println(""+(char)(65+x));
+            n[x].setText((char)(65+x)+""); //More ASCII hell
         }
         for(Label s : n){
             if(s.getText().equalsIgnoreCase(l)){
